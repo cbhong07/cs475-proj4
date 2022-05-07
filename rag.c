@@ -20,7 +20,14 @@ void rag_dealloc(int pid, int lockid)
 
 void rag_print()
 {
-
+    for(int i = 0; i < (NPROC+NLOCK); i++)
+    {
+        for(int j = 0; j < (NLOCK+NPROC); j++)
+        {
+            kprintf("%d ", rag[i][j]);
+        }
+        kprintf("\n");
+    }
 }
 
 void deadlock_detect()
