@@ -2,20 +2,23 @@
 #define NPROC 20
 
 #include <stdlib.h>
+int rag[NLOCK+NPROC][NLOCK+NPROC];
 
 void rag_request(int pid, int lockid)
 {
-
+    rag[pid][lockid] = 1;
 }
 
 void rag_alloc(int pid, int lockid)
 {
-
+    rag[lockid][pid] = 1;
+    rag[pid][lockid] = 0;
 }
 
 void rag_dealloc(int pid, int lockid)
 {
-
+    rag[lockid][pid] = 0;
+    rag[pid][lockid] = 0;
 }
 
 void rag_print()
@@ -32,6 +35,21 @@ void rag_print()
 
 void deadlock_detect()
 {
-
+    char* visited[NLOCK*NPROC];
+    int visitCounter = 0;
+    for(int i = 0; i < (NLOCK+NPROC); i++) {
+        for(int j = 0; j < (NLOCK+NPROC); j++) {
+            if(rag[i][j] > 1) {
+                kprintf("DEADLOCK");
+            }
+            else if(rag[i][j] == 1) {
+                rag[i][j] += 1;
+                visited[visitCounter] = i + "->" + j;
+                visitCounter += 1;
+                i = j;
+                j = 0;
+            }
+        }
+    }
 }
 
