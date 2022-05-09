@@ -7,8 +7,8 @@
 #define N 5	//number of philosophers and forks
 
 //TODO - locks must be declared and initialized here
-mutex_t	lock = FALSE;
-mutex_t	fork[N] = {FALSE, FALSE, FALSE, FALSE, FALSE};
+lid32	lock;
+lid32	fork[N];
 
 
 /**
@@ -54,31 +54,38 @@ void	philosopher(uint32 phil_id)
 		//think 70% of the time
 		if ((rand()*1.0)/RAND_MAX < 0.7)
 		{
-			mutex_lock(&lock);
+			acquire(&lock);
 			kprintf("Philosopher %d thinking: zzzzzZZZz\n", phil_id);
-			mutex_unlock(&lock);
+			release(&lock);
 
 			think();
 		}
 		else	//eat 30% of the time
 		{
-			mutex_lock(&fork[right]);	//grab the right fork (or wait)
-			if (!fork[left])
+			//mutex_lock(&fork[right]);	//grab the right fork (or wait)
+			acquire(&fork[right]);
+			if (locktab[fork[left]].lock == FALSE)
 			{
-				mutex_lock(&fork[left]);	//grab the left fork
+				//mutex_lock(&fork[left]);	//grab the left fork
+				acquire(&fork[left]);
 
-				mutex_lock(&lock);
+				//mutex_lock(&lock);
+				acquire(&lock);
 				kprintf("Philosopher %d eating: nom nom nom\n", phil_id);
-				mutex_unlock(&lock);
+				//mutex_unlock(&lock);
+				release(&lock);
 
 				eat();
 
-				mutex_unlock(&fork[left]);
-				mutex_unlock(&fork[right]);
+				//mutex_unlock(&fork[left]);
+				//mutex_unlock(&fork[right]);
+				release(&fork[left]);
+				release(&fork[right]);
 			}
 			else
 			{
-				mutex_unlock(&fork[right]);	//relinquish right fork
+				//mutex_unlock(&fork[right]);	//relinquish right fork
+				release(&fork[right]);
 			}
 		}
 	}
@@ -86,6 +93,14 @@ void	philosopher(uint32 phil_id)
 
 int	main(uint32 argc, uint32 *argv)
 {
+	lock = lock_create();
+
+	for(int i = 0; i < N; i++)
+	{
+		fork[i] = lock_create();
+		kprintf("INIT: FORK[%d] = %d\n", i, fork[i]);
+	}
+
 	ready(create((void*) philosopher, INITSTK, 15, "Ph1", 1, 0), FALSE);
 	ready(create((void*) philosopher, INITSTK, 15, "Ph2", 1, 1), FALSE);
 	ready(create((void*) philosopher, INITSTK, 15, "Ph3", 1, 2), FALSE);

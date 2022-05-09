@@ -38,12 +38,12 @@ local	lid32	newlock(void)
 	for(i = 0; i < NLOCK; i++)
 	{
 		//TODO - and find a lock that is free to use
-		if(locktab[i].lock == LOCK_FREE)
+		if(locktab[i].state == LOCK_FREE)
 		{
 			//TODO - set its state to used, and reset the mutex to FALSE
-			lockid = i;
-			locktab[i].lock = LOCK_USED;
-			locktab[i].state = FALSE;
+			lockid = (lid32) i;
+			locktab[i].state = LOCK_USED;
+			locktab[i].lock = FALSE;
 
 			//TODO - return its lockid
 			return lockid;
@@ -84,7 +84,7 @@ syscall	lock_delete(lid32 lockid)
 	//TODO - remove all processes waiting on its queue, and send them to the ready queue
 	while(!isempty(lptr->wait_queue)) {
 		pid32 temp = dequeue(lptr->wait_queue);
-		enqueue(temp, readyqueue, proctab[currpid].prprio); //idk what key is
+		enqueue(temp, readyqueue, proctab[currpid].prprio);
 	}
 	//TODO (RAG) - remove all RAG edges to and from this lock
 

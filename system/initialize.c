@@ -180,8 +180,8 @@ static	void	sysinit(void)
 	/* Initialize lockentry */
 
 	for(i = 0; i < NLOCK; i++) {
-		locktab[i].lock = LOCK_FREE;
-		locktab[i].state = FALSE;
+		locktab[i].state = LOCK_FREE;
+		locktab[i].lock = FALSE;
 		locktab[i].wait_queue = newqueue();
 	}
 
