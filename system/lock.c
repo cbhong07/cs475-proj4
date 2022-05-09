@@ -84,7 +84,7 @@ syscall	lock_delete(lid32 lockid)
 	//TODO - remove all processes waiting on its queue, and send them to the ready queue
 	while(!isempty(lptr->wait_queue)) {
 		pid32 temp = dequeue(lptr->wait_queue);
-		enqueue(temp, readyqueue, NULL); //idk what key is
+		enqueue(temp, readyqueue, proctab[currpid].prprio); //idk what key is
 	}
 	//TODO (RAG) - remove all RAG edges to and from this lock
 
@@ -120,7 +120,7 @@ syscall	acquire(lid32 lockid)
 
 	//TODO START
 	//TODO - enqueue the current process ID on the lock's wait queue
-	enqueue(currpid, lptr->wait_queue, NULL); 
+	enqueue(currpid, lptr->wait_queue, proctab[currpid].prprio); 
 	//TODO (RAG) - add a request edge in the RAG
 	//TODO END
 
