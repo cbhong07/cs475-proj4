@@ -74,9 +74,13 @@ syscall	lock_delete(lid32 lockid)
 	//TODO START
 
 	//TODO - reset lock's state to free and the mutex to FALSE
-
+	lptr->state = LOCK_FREE;
+	lptr->lock = FALSE;
 	//TODO - remove all processes waiting on its queue, and send them to the ready queue
-
+	while(!isempty(lptr->wait_queue)) {
+		pid32 temp = dequeue(lptr->wait_queue);
+		enqueue(temp, readyqueue, NULL); //idk what key is
+	}
 	//TODO (RAG) - remove all RAG edges to and from this lock
 
 	//TODO END
@@ -153,9 +157,9 @@ syscall	release(lid32 lockid)
 
 	//TODO START
 	//TODO - remove current process' ID from the lock's queue
-
+	remove(currpid, lptr->wait_queue);
 	//TODO - unlock the mutex
-
+	lptr->lock = FALSE;
 	//TODO (RAG) - remove allocation edge from RAG
 	//TODO END
 
