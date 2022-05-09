@@ -41,11 +41,12 @@ local	lid32	newlock(void)
 		if(locktab[i].lock == LOCK_FREE)
 		{
 			//TODO - set its state to used, and reset the mutex to FALSE
+			lockid = i;
 			locktab[i].lock = LOCK_USED;
 			locktab[i].state = FALSE;
 
 			//TODO - return its lockid
-			return i;
+			return lockid;
 		}
 		//TODO - if there is no such lock, return SYSERR
 		return SYSERR;
@@ -119,6 +120,7 @@ syscall	acquire(lid32 lockid)
 
 	//TODO START
 	//TODO - enqueue the current process ID on the lock's wait queue
+	enqueue(currpid, lptr->wait_queue, NULL); 
 	//TODO (RAG) - add a request edge in the RAG
 	//TODO END
 
@@ -126,6 +128,7 @@ syscall	acquire(lid32 lockid)
 
 	//TODO START
 	//TODO - lock the mutex!
+	lptr->lock = TRUE;
 	//TODO END
 
 	mask = disable();			//disable interrupts
