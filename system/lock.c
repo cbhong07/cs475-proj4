@@ -34,6 +34,7 @@ local	lid32	newlock(void)
 	int32	i;			/* iterate through # entries	*/
 
 	//TODO START
+	
 
 	//TODO - loop through each element in the lock table.
 

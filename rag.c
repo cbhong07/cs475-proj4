@@ -59,8 +59,9 @@ void deadlock_detect()
 				visited[visitCounter] = i + "->" + j;
 				visitCounter += 1;
 				**/
+				printf("Jumping from %d to %d\n", i, j);
 				i = j;
-				j = 0;
+				j = -1;
 			}
 		}
 	}
@@ -73,13 +74,13 @@ void deadlockHelper()
 		for(int j = 0; j < (NLOCK+NPROC); j++)
 		{
 			if(rag[i][j] == 2) {
-				if(i > NLOCK)
-					printf("pid=%d ", i-NLOCK); //proc :)
+				if(i < NLOCK)
+					printf("pid=%d ", i); //proc :)
 				else
-					printf("lockID=%d ", i); //lock :)
+					printf("lockID=%d ", i-NPROC); //lock :)
 				rag[i][j] += -1;
 				i = j;
-				j = 0;
+				j = -1;
 			}
 		}
 	}
@@ -87,7 +88,7 @@ void deadlockHelper()
 
 int main(int arg, int **argv)
 {
-	char input[] = "1   R   1\n1    A   1\n0    R   1\n0    R   2\n0    A   2\n1    R   2";
+	char input[] = "0   R  3\n0   A  3\n1   R  2\n1   A  2\n2   R  1\n2   A  1\n3   R  0\n3   A  0\n1   R  3\n2   R  2\n3   R  1\n0   R  1";
 	char* token = strtok(input, "\t\n   ");
 	char* ids[3];
 	int i = 0;
