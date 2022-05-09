@@ -34,18 +34,22 @@ local	lid32	newlock(void)
 	int32	i;			/* iterate through # entries	*/
 
 	//TODO START
-	
-
 	//TODO - loop through each element in the lock table.
+	for(i = 0; i < NLOCK; i++)
+	{
+		//TODO - and find a lock that is free to use
+		if(locktab[i].lock == LOCK_FREE)
+		{
+			//TODO - set its state to used, and reset the mutex to FALSE
+			locktab[i].lock = LOCK_USED;
+			locktab[i].state = FALSE;
 
-	//TODO - and find a lock that is free to use
-
-	//TODO - set its state to used, and reset the mutex to FALSE
-
-	//TODO - return its lockid
-
-	//TODO - if there is no such lock, return SYSERR
-
+			//TODO - return its lockid
+			return i;
+		}
+		//TODO - if there is no such lock, return SYSERR
+		return SYSERR;
+	}
 	//TODO END
 }
 
